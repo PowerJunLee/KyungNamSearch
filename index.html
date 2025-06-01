@@ -10,10 +10,15 @@
       padding: 10px;
       background: #f8f8f8;
     }
+    label {
+      font-weight: bold;
+      margin-top: 8px;
+      display: block;
+    }
     select, button {
       width: 100%;
       padding: 10px;
-      margin: 8px 0;
+      margin: 4px 0 12px;
       font-size: 16px;
     }
     .count {
@@ -39,12 +44,25 @@
 </head>
 <body>
   <h3>차량 재고 검색기</h3>
+
+  <label for="차종">차종</label>
   <select id="차종" onchange="updateFilters('차종')"></select>
+
+  <label for="트림">사양</label>
   <select id="트림" onchange="updateFilters('트림')"></select>
+
+  <label for="옵션">옵션</label>
   <select id="옵션" onchange="updateFilters('옵션')"></select>
+
+  <label for="외장내장">외장/내장</label>
   <select id="외장내장" onchange="updateFilters('외장내장')"></select>
+
+  <label for="전시구분">전시차 여부</label>
   <select id="전시구분"></select>
+
+  <label for="출고센터">출고센터</label>
   <select id="출고센터"></select>
+
   <button onclick="search()">검색</button>
 
   <div class="count" id="resultCount"></div>
@@ -97,6 +115,17 @@
       });
     }
 
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      if (isNaN(date)) return dateStr;
+      return date.toISOString().split('T')[0]; // yyyy-mm-dd
+    }
+
+    function formatRate(rate) {
+      if (!rate || isNaN(rate)) return rate;
+      return (parseFloat(rate) * 100).toFixed(1) + '%';
+    }
+
     function search() {
       const filters = {
         차종: document.getElementById('차종').value,
@@ -131,14 +160,14 @@
           <div class="card-item"><strong>외장/내장:</strong> ${r.외장내장}</div>
           <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
           <div class="card-item"><strong>출고센터:</strong> ${r.출고센터}</div>
-          <div class="card-item"><strong>생산일:</strong> ${r.생산일}</div>
+          <div class="card-item"><strong>생산일:</strong> ${formatDate(r.생산일)}</div>
           <div class="card-item"><strong>판매코드:</strong> ${r.판매코드}</div>
           <div class="card-item highlight"><strong>판매가:</strong> ${r.판매가}</div>
           <div class="card-item highlight"><strong>기본:</strong> ${r.기본}</div>
           <div class="card-item highlight"><strong>판촉:</strong> ${r.판촉}</div>
           <div class="card-item highlight"><strong>특별:</strong> ${r.특별}</div>
           <div class="card-item highlight"><strong>계:</strong> ${r.계}</div>
-          <div class="card-item highlight"><strong>D/C율:</strong> ${r["D/C율"]}</div>
+          <div class="card-item highlight"><strong>D/C율:</strong> ${formatRate(r["D/C율"])}</div>
         `;
         container.appendChild(card);
       });
