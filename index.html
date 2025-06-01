@@ -65,9 +65,13 @@
       <select id="차종" onchange="onFilterChange('차종')"></select>
       <button onclick="resetOne('차종')">🔄 초기화</button>
     </div>
-    <div class="filter-row"><label>트림</label>
-      <select id="트림" onchange="onFilterChange('트림')"></select>
-      <button onclick="resetOne('트림')">🔄 초기화</button>
+    <div class="filter-row"><label>엔진</label>
+      <select id="엔진" onchange="onFilterChange('엔진')"></select>
+      <button onclick="resetOne('엔진')">🔄 초기화</button>
+    </div>
+    <div class="filter-row"><label>트림구분</label>
+      <select id="트림구분" onchange="onFilterChange('트림구분')"></select>
+      <button onclick="resetOne('트림구분')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>옵션</label>
       <select id="옵션" onchange="onFilterChange('옵션')"></select>
@@ -84,14 +88,6 @@
     <div class="filter-row"><label>출고센터</label>
       <select id="출고센터" onchange="onFilterChange('출고센터')"></select>
       <button onclick="resetOne('출고센터')">🔄 초기화</button>
-    </div>
-    <div class="filter-row"><label>엔진</label>
-      <select id="엔진" onchange="onFilterChange('엔진')"></select>
-      <button onclick="resetOne('엔진')">🔄 초기화</button>
-    </div>
-    <div class="filter-row"><label>트림구분</label>
-      <select id="트림구분" onchange="onFilterChange('트림구분')"></select>
-      <button onclick="resetOne('트림구분')">🔄 초기화</button>
     </div>
 
     <div style="margin-top: 12px;">
@@ -113,7 +109,7 @@
       });
 
     function populateFilters() {
-      const fields = ["차종", "트림", "옵션", "외장내장", "전시구분", "출고센터", "엔진", "트림구분"];
+      const fields = ["차종", "엔진", "트림구분", "옵션", "외장내장", "전시구분", "출고센터"];
       fields.forEach(field => {
         updateFilterOptions(field, data);
       });
@@ -146,13 +142,12 @@
     function getFilters() {
       return {
         "차종": document.getElementById("차종").value,
-        "트림": document.getElementById("트림").value,
+        "엔진": document.getElementById("엔진").value,
+        "트림구분": document.getElementById("트림구분").value,
         "옵션": document.getElementById("옵션").value,
         "외장내장": document.getElementById("외장내장").value,
         "전시구분": document.getElementById("전시구분").value,
-        "출고센터": document.getElementById("출고센터").value,
-        "엔진": document.getElementById("엔진").value,
-        "트림구분": document.getElementById("트림구분").value
+        "출고센터": document.getElementById("출고센터").value
       };
     }
 
@@ -160,13 +155,12 @@
       const filters = getFilters();
       const results = data.filter(row =>
         (!filters.차종 || row.차종 === filters.차종) &&
-        (!filters.트림 || row.트림 === filters.트림) &&
+        (!filters.엔진 || row.엔진 === filters.엔진) &&
+        (!filters.트림구분 || row.트림구분 === filters.트림구분) &&
         (!filters.옵션 || row.옵션 === filters.옵션) &&
         (!filters.외장내장 || row.외장내장 === filters.외장내장) &&
         (!filters.전시구분 || row.전시구분 === filters.전시구분) &&
-        (!filters.출고센터 || row.출고센터 === filters.출고센터) &&
-        (!filters.엔진 || row.엔진 === filters.엔진) &&
-        (!filters.트림구분 || row.트림구분 === filters.트림구분)
+        (!filters.출고센터 || row.출고센터 === filters.출고센터)
       );
 
       document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
