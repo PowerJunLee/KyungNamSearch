@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -53,29 +54,17 @@
   <h2>📱 차량 재고 검색기</h2>
 
   <div>
-    <label>차종</label>
-    <select id="차종" onchange="onFilterChange('차종')"></select>
-    <button onclick="resetOne('차종')">전체</button>
+    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:40px;">차종</label><select id="차종" onchange="onFilterChange('차종')"></select><button onclick="resetOne('차종')">🔄 초기화</button></div>
 
-    <label>사양</label>
-    <select id="트림" onchange="onFilterChange('트림')"></select>
-    <button onclick="resetOne('트림')">전체</button>
+    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:40px;">사양</label><select id="트림" onchange="onFilterChange('트림')"></select><button onclick="resetOne('트림')">🔄 초기화</button></div>
 
-    <label>옵션</label>
-    <select id="옵션" onchange="onFilterChange('옵션')"></select>
-    <button onclick="resetOne('옵션')">전체</button>
+    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:40px;">옵션</label><select id="옵션" onchange="onFilterChange('옵션')"></select><button onclick="resetOne('옵션')">🔄 초기화</button></div>
 
-    <label>외장/내장</label>
-    <select id="외장내장" onchange="onFilterChange('외장내장')"></select>
-    <button onclick="resetOne('외장내장')">전체</button>
+    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:65px;">외장/내장</label><select id="외장내장" onchange="onFilterChange('외장내장')"></select><button onclick="resetOne('외장내장')">🔄 초기화</button></div>
 
-    <label>전시구분</label>
-    <select id="전시구분" onchange="onFilterChange('전시구분')"></select>
-    <button onclick="resetOne('전시구분')">전체</button>
+    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:50px;">전시구분</label><select id="전시구분" onchange="onFilterChange('전시구분')"></select><button onclick="resetOne('전시구분')">🔄 초기화</button></div>
 
-    <label>출고센터</label>
-    <select id="출고센터" onchange="onFilterChange('출고센터')"></select>
-    <button onclick="resetOne('출고센터')">전체</button>
+    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:60px;">출고센터</label><select id="출고센터" onchange="onFilterChange('출고센터')"></select><button onclick="resetOne('출고센터')">🔄 초기화</button></div>
 
     <button onclick="search()">🔍 검색</button>
   </div>
@@ -91,7 +80,7 @@
       .then(json => {
         data = json;
         populateFilters();
-        search();
+        search(); // 초기화면에도 보여줌
       });
 
     function populateFilters() {
