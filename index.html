@@ -71,7 +71,7 @@
   <script>
     let data = [];
 
-    fetch('inventory_data.json')
+    fetch('inventory_data_updated.json')
       .then(res => res.json())
       .then(json => {
         data = json;
@@ -152,6 +152,7 @@
       results.forEach(r => {
         const card = document.createElement("div");
         card.className = "card";
+        const formattedCodes = r.판매코드.split(',').map(code => code.trim()).join(' ');
         card.innerHTML = `
           <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
           <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
@@ -161,7 +162,7 @@
           <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
           <div class="card-item"><strong>출고센터:</strong> ${r.출고센터}</div>
           <div class="card-item"><strong>생산일:</strong> ${formatDate(r.생산일)}</div>
-          <div class="card-item"><strong>판매코드:</strong> ${r.판매코드}</div>
+          <div class="card-item"><strong>판매코드:</strong> ${formattedCodes}</div>
           <div class="card-item highlight"><strong>판매가:</strong> ${r.판매가}</div>
           <div class="card-item highlight"><strong>기본:</strong> ${r.기본}</div>
           <div class="card-item highlight"><strong>판촉:</strong> ${r.판촉}</div>
