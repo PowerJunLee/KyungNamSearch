@@ -6,14 +6,8 @@
   <title>경남 H-SUPER SAVE 검색기</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 15px;
-      background-color: #f2f2f2;
-    }
-    h2 {
-      margin-bottom: 10px;
-    }
+    body { font-family: sans-serif; padding: 15px; background-color: #f2f2f2; }
+    h2 { margin-bottom: 10px; }
     .banner {
       background-color: #fff4e5;
       border-left: 6px solid #ff8c00;
@@ -23,54 +17,16 @@
       line-height: 1.6;
       font-size: 14px;
     }
-    .banner strong {
-      color: #d35400;
-    }
-    label {
-      font-size: 14px;
-    }
-    select {
-      width: 100%;
-      padding: 8px;
-      font-size: 14px;
-      margin-bottom: 5px;
-    }
-    button {
-      padding: 4px 6px;
-      margin-left: 5px;
-      font-size: 12px;
-      white-space: nowrap;
-    }
-    .card {
-      background: white;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      padding: 15px;
-      margin-top: 15px;
-    }
-    .card-item {
-      margin-bottom: 5px;
-      font-size: 14px;
-    }
-    .highlight {
-      color: blue;
-      font-weight: bold;
-    }
-    .count {
-      color: red;
-      font-weight: bold;
-      margin-top: 15px;
-      font-size: 16px;
-    }
-    .filter-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .filter-row label {
-      min-width: 100px;
-    }
+    .banner strong { color: #d35400; }
+    label { font-size: 14px; }
+    select { width: 100%; padding: 8px; font-size: 14px; margin-bottom: 5px; }
+    button { padding: 4px 6px; margin-left: 5px; font-size: 12px; white-space: nowrap; }
+    .card { background: white; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 15px; margin-top: 15px; }
+    .card-item { margin-bottom: 5px; font-size: 14px; }
+    .highlight { color: blue; font-weight: bold; }
+    .count { color: red; font-weight: bold; margin-top: 15px; font-size: 16px; }
+    .filter-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+    .filter-row label { min-width: 100px; }
   </style>
 </head>
 <body>
@@ -83,38 +39,32 @@
 
   <div>
     <div class="filter-row"><label>차종</label>
-      <select id="차종" onchange="onFilterChange()"></select>
-      <button onclick="resetOne('차종')">🔄 초기화</button>
+      <select id="차종" onchange="onFilterChange()"></select><button onclick="resetOne('차종')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>엔진</label>
-      <select id="엔진" onchange="onFilterChange()"></select>
-      <button onclick="resetOne('엔진')">🔄 초기화</button>
+      <select id="엔진" onchange="onFilterChange()"></select><button onclick="resetOne('엔진')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>트림구분</label>
-      <select id="트림구분" onchange="onFilterChange()"></select>
-      <button onclick="resetOne('트림구분')">🔄 초기화</button>
+      <select id="트림구분" onchange="onFilterChange()" disabled></select><button onclick="resetOne('트림구분')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>상세사양</label>
-      <select id="트림" onchange="onFilterChange()"></select>
-      <button onclick="resetOne('트림')">🔄 초기화</button>
+      <select id="트림" onchange="onFilterChange()" disabled></select><button onclick="resetOne('트림')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>옵션</label>
-      <select id="옵션" onchange="onFilterChange()"></select>
-      <button onclick="resetOne('옵션')">🔄 초기화</button>
+      <select id="옵션" onchange="onFilterChange()" disabled></select><button onclick="resetOne('옵션')">🔄 초기화</button>
     </div>
-    <div class="filter-row"><label>외장/내장</label>
-      <select id="외장내장" onchange="onFilterChange()"></select>
-      <button onclick="resetOne('외장내장')">🔄 초기화</button>
+    <div class="filter-row"><label>외장칼라</label>
+      <select id="외장칼라" onchange="onFilterChange()" disabled></select><button onclick="resetOne('외장칼라')">🔄 초기화</button>
+    </div>
+    <div class="filter-row"><label>내장칼라</label>
+      <select id="내장칼라" onchange="onFilterChange()" disabled></select><button onclick="resetOne('내장칼라')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>차량상태</label>
-      <select id="차량상태" onchange="onFilterChange()"></select>
-      <button onclick="resetOne('차량상태')">🔄 초기화</button>
+      <select id="차량상태" onchange="onFilterChange()"></select><button onclick="resetOne('차량상태')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>출고센터</label>
-      <select id="출고센터" onchange="onFilterChange()"></select>
-      <button onclick="resetOne('출고센터')">🔄 초기화</button>
+      <select id="출고센터" onchange="onFilterChange()"></select><button onclick="resetOne('출고센터')">🔄 초기화</button>
     </div>
-
     <div style="margin-top: 12px;">
       <button onclick="search()">🔍 검색</button>
     </div>
@@ -126,11 +76,10 @@
   <script>
     let data = [];
     let filteredData = [];
+    const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장칼라", "내장칼라", "차량상태", "출고센터"];
+    const dependentFilters = ["트림구분", "트림", "옵션", "외장칼라", "내장칼라"];
 
-    const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장내장", "차량상태", "출고센터"];
-    const dependentFilters = ["트림구분", "트림", "옵션", "외장내장"];
-
-    fetch('inventory_data_final_with_status.json')
+    fetch('inventory_data_final_fixed.json')
       .then(res => res.json())
       .then(json => {
         data = json;
@@ -153,13 +102,12 @@
         (!filters.트림구분 || row.트림구분 === filters.트림구분) &&
         (!filters.트림 || row.트림 === filters.트림) &&
         (!filters.옵션 || row.옵션 === filters.옵션) &&
-        (!filters.외장내장 || row.외장내장 === filters.외장내장) &&
+        (!filters.외장칼라 || row.외장칼라 === filters.외장칼라) &&
+        (!filters.내장칼라 || row.내장칼라 === filters.내장칼라) &&
         (!filters.차량상태 || row.차량상태 === filters.차량상태) &&
         (!filters.출고센터 || row.출고센터 === filters.출고센터)
       );
-
       controlDependentFilters();
-
       filterOrder.forEach(field => {
         updateFilterOptions(field, filteredData);
       });
@@ -169,7 +117,6 @@
       const carType = document.getElementById("차종").value;
       const engine = document.getElementById("엔진").value;
       const enable = carType && engine;
-
       dependentFilters.forEach(id => {
         const el = document.getElementById(id);
         el.disabled = !enable;
@@ -213,7 +160,8 @@
         (!filters.트림구분 || row.트림구분 === filters.트림구분) &&
         (!filters.트림 || row.트림 === filters.트림) &&
         (!filters.옵션 || row.옵션 === filters.옵션) &&
-        (!filters.외장내장 || row.외장내장 === filters.외장내장) &&
+        (!filters.외장칼라 || row.외장칼라 === filters.외장칼라) &&
+        (!filters.내장칼라 || row.내장칼라 === filters.내장칼라) &&
         (!filters.차량상태 || row.차량상태 === filters.차량상태) &&
         (!filters.출고센터 || row.출고센터 === filters.출고센터)
       );
@@ -230,7 +178,8 @@
           <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
           <div class="card-item"><strong>사양:</strong> ${r.트림}</div>
           <div class="card-item"><strong>옵션:</strong> ${r.옵션}</div>
-          <div class="card-item"><strong>외장/내장:</strong> ${r.외장내장}</div>
+          <div class="card-item"><strong>외장칼라:</strong> ${r.외장칼라}</div>
+          <div class="card-item"><strong>내장칼라:</strong> ${r.내장칼라}</div>
           <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
           <div class="card-item"><strong>출고센터:</strong> ${r.출고센터}</div>
           <div class="card-item"><strong>생산일:</strong> ${r.생산일}</div>
