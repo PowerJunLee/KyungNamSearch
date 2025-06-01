@@ -79,7 +79,7 @@
     const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장칼라", "내장칼라", "차량상태", "출고센터"];
     const dependentFilters = ["트림구분", "트림", "옵션", "외장칼라", "내장칼라"];
 
-    fetch('inventory_data_final_fixed_clean.json')
+    fetch('inventory_data_final_clean.json')
       .then(res => res.json())
       .then(json => {
         data = json;
