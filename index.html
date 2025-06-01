@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>차량 재고 검색기</title>
+  <title>경남 H-SUPER SAVE 검색기</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -97,12 +97,11 @@
   <script>
     let data = [];
 
-    fetch('inventory_data_clean_final_no_ad.json')
+    fetch('inventory_data_final.json')
       .then(res => res.json())
       .then(json => {
         data = json;
         populateFilters();
-        // 검색 자동 실행은 제거됨
       });
 
     function populateFilters() {
