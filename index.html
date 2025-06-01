@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -13,8 +12,6 @@
     }
     label {
       font-size: 14px;
-      display: block;
-      margin-top: 10px;
     }
     select {
       width: 100%;
@@ -23,9 +20,10 @@
       margin-bottom: 5px;
     }
     button {
-      padding: 6px 10px;
+      padding: 4px 6px;
       margin-left: 5px;
-      font-size: 13px;
+      font-size: 12px;
+      white-space: nowrap;
     }
     .card {
       background: white;
@@ -48,25 +46,49 @@
       margin-top: 15px;
       font-size: 16px;
     }
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .filter-row label {
+      min-width: 65px;
+    }
   </style>
 </head>
 <body>
   <h2>📱 차량 재고 검색기</h2>
 
   <div>
-    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:40px;">차종</label><select id="차종" onchange="onFilterChange('차종')"></select><button onclick="resetOne('차종')">🔄 초기화</button></div>
+    <div class="filter-row"><label>차종</label>
+      <select id="차종" onchange="onFilterChange('차종')"></select>
+      <button onclick="resetOne('차종')">🔄 초기화</button>
+    </div>
+    <div class="filter-row"><label>사양</label>
+      <select id="트림" onchange="onFilterChange('트림')"></select>
+      <button onclick="resetOne('트림')">🔄 초기화</button>
+    </div>
+    <div class="filter-row"><label>옵션</label>
+      <select id="옵션" onchange="onFilterChange('옵션')"></select>
+      <button onclick="resetOne('옵션')">🔄 초기화</button>
+    </div>
+    <div class="filter-row"><label>외장/내장</label>
+      <select id="외장내장" onchange="onFilterChange('외장내장')"></select>
+      <button onclick="resetOne('외장내장')">🔄 초기화</button>
+    </div>
+    <div class="filter-row"><label>전시구분</label>
+      <select id="전시구분" onchange="onFilterChange('전시구분')"></select>
+      <button onclick="resetOne('전시구분')">🔄 초기화</button>
+    </div>
+    <div class="filter-row"><label>출고센터</label>
+      <select id="출고센터" onchange="onFilterChange('출고센터')"></select>
+      <button onclick="resetOne('출고센터')">🔄 초기화</button>
+    </div>
 
-    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:40px;">사양</label><select id="트림" onchange="onFilterChange('트림')"></select><button onclick="resetOne('트림')">🔄 초기화</button></div>
-
-    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:40px;">옵션</label><select id="옵션" onchange="onFilterChange('옵션')"></select><button onclick="resetOne('옵션')">🔄 초기화</button></div>
-
-    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:65px;">외장/내장</label><select id="외장내장" onchange="onFilterChange('외장내장')"></select><button onclick="resetOne('외장내장')">🔄 초기화</button></div>
-
-    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:50px;">전시구분</label><select id="전시구분" onchange="onFilterChange('전시구분')"></select><button onclick="resetOne('전시구분')">🔄 초기화</button></div>
-
-    <div style="display:flex; align-items:center; gap:6px;"><label style="min-width:60px;">출고센터</label><select id="출고센터" onchange="onFilterChange('출고센터')"></select><button onclick="resetOne('출고센터')">🔄 초기화</button></div>
-
-    <button onclick="search()">🔍 검색</button>
+    <div style="margin-top: 12px;">
+      <button onclick="search()">🔍 검색</button>
+    </div>
   </div>
 
   <div class="count" id="resultCount"></div>
@@ -75,12 +97,12 @@
   <script>
     let data = [];
 
-    fetch('inventory_data_final.json')
+    fetch('inventory_data_clean_final_no_ad.json')
       .then(res => res.json())
       .then(json => {
         data = json;
         populateFilters();
-        search(); // 초기화면에도 보여줌
+        // 검색 자동 실행은 제거됨
       });
 
     function populateFilters() {
@@ -153,7 +175,7 @@
         card.innerHTML = `
           <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
           <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
-          <div class="card-item"><strong>사양:</strong> ${r.트림}</div>
+          <div class="card-item"><strong>사양:</strong> ${r.사양}</div>
           <div class="card-item"><strong>옵션:</strong> ${r.옵션}</div>
           <div class="card-item"><strong>외장/내장:</strong> ${r.외장내장}</div>
           <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
@@ -163,8 +185,6 @@
           <div class="card-item highlight"><strong>판매가:</strong> ${r.판매가}</div>
           <div class="card-item highlight"><strong>기본:</strong> ${r.기본}</div>
           <div class="card-item highlight"><strong>판촉:</strong> ${r.판촉}</div>
-          <div class="card-item highlight"><strong>페스타:</strong> ${r.페스타}</div>
-          <div class="card-item highlight"><strong>특별:</strong> ${r.특별}</div>
           <div class="card-item highlight"><strong>계:</strong> ${r.계}</div>
           <div class="card-item highlight"><strong>D/C율:</strong> ${(parseFloat(r["D/C율"]) * 100).toFixed(1)}%</div>
         `;
