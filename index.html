@@ -62,35 +62,35 @@
 
   <div>
     <div class="filter-row"><label>차종</label>
-      <select id="차종" onchange="onFilterChange('차종')"></select>
+      <select id="차종" onchange="onFilterChange()"></select>
       <button onclick="resetOne('차종')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>엔진</label>
-      <select id="엔진" onchange="onFilterChange('엔진')"></select>
+      <select id="엔진" onchange="onFilterChange()"></select>
       <button onclick="resetOne('엔진')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>트림구분</label>
-      <select id="트림구분" onchange="onFilterChange('트림구분')"></select>
+      <select id="트림구분" onchange="onFilterChange()"></select>
       <button onclick="resetOne('트림구분')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>상세사양(선택)</label>
-      <select id="트림" onchange="onFilterChange('트림')"></select>
+      <select id="트림" onchange="onFilterChange()"></select>
       <button onclick="resetOne('트림')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>옵션</label>
-      <select id="옵션" onchange="onFilterChange('옵션')"></select>
+      <select id="옵션" onchange="onFilterChange()"></select>
       <button onclick="resetOne('옵션')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>외장/내장</label>
-      <select id="외장내장" onchange="onFilterChange('외장내장')"></select>
+      <select id="외장내장" onchange="onFilterChange()"></select>
       <button onclick="resetOne('외장내장')">🔄 초기화</button>
     </div>
-    <div class="filter-row"><label>전시구분</label>
-      <select id="전시구분" onchange="onFilterChange('전시구분')"></select>
-      <button onclick="resetOne('전시구분')">🔄 초기화</button>
+    <div class="filter-row"><label>차량상태</label>
+      <select id="차량상태" onchange="onFilterChange()"></select>
+      <button onclick="resetOne('차량상태')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>출고센터</label>
-      <select id="출고센터" onchange="onFilterChange('출고센터')"></select>
+      <select id="출고센터" onchange="onFilterChange()"></select>
       <button onclick="resetOne('출고센터')">🔄 초기화</button>
     </div>
 
@@ -104,18 +104,40 @@
 
   <script>
     let data = [];
+    let filteredData = [];
 
-    fetch('inventory_data_final_updated.json')
+    fetch('inventory_data_final_with_status.json')
       .then(res => res.json())
       .then(json => {
         data = json;
+        filteredData = data;
         populateFilters();
       });
 
+    const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장내장", "차량상태", "출고센터"];
+
     function populateFilters() {
-      const fields = ["차종", "엔진", "트림구분", "트림", "옵션", "외장내장", "전시구분", "출고센터"];
-      fields.forEach(field => {
-        updateFilterOptions(field, data);
+      filterOrder.forEach(field => {
+        updateFilterOptions(field, filteredData);
+      });
+    }
+
+    function onFilterChange() {
+      const filters = getFilters();
+      filteredData = data.filter(row =>
+        (!filters.차종 || row.차종 === filters.차종) &&
+        (!filters.엔진 || row.엔진 === filters.엔진) &&
+        (!filters.트림구분 || row.트림구분 === filters.트림구분) &&
+        (!filters.트림 || row.트림 === filters.트림) &&
+        (!filters.옵션 || row.옵션 === filters.옵션) &&
+        (!filters.외장내장 || row.외장내장 === filters.외장내장) &&
+        (!filters.차량상태 || row.차량상태 === filters.차량상태) &&
+        (!filters.출고센터 || row.출고센터 === filters.출고센터)
+      );
+
+      // 연동 필터 반영
+      filterOrder.forEach(field => {
+        updateFilterOptions(field, filteredData);
       });
     }
 
@@ -123,7 +145,7 @@
       const select = document.getElementById(field);
       const current = select.value;
       select.innerHTML = '<option value="">(전체)</option>';
-      const values = [...new Set(dataset.map(d => d[field]).filter(v => v !== ""))];
+      const values = [...new Set(dataset.map(d => d[field]).filter(v => v && v !== "null" && v !== "NaN"))];
       values.sort().forEach(v => {
         const opt = document.createElement("option");
         opt.value = v;
@@ -133,27 +155,18 @@
       });
     }
 
-    function onFilterChange(changedId) {
-      search();
-    }
-
     function resetOne(fieldId) {
       const select = document.getElementById(fieldId);
       if (select) select.value = "";
-      search();
+      onFilterChange();
     }
 
     function getFilters() {
-      return {
-        "차종": document.getElementById("차종").value,
-        "엔진": document.getElementById("엔진").value,
-        "트림구분": document.getElementById("트림구분").value,
-        "트림": document.getElementById("트림").value,
-        "옵션": document.getElementById("옵션").value,
-        "외장내장": document.getElementById("외장내장").value,
-        "전시구분": document.getElementById("전시구분").value,
-        "출고센터": document.getElementById("출고센터").value
-      };
+      const obj = {};
+      filterOrder.forEach(id => {
+        obj[id] = document.getElementById(id).value;
+      });
+      return obj;
     }
 
     function search() {
@@ -165,7 +178,7 @@
         (!filters.트림 || row.트림 === filters.트림) &&
         (!filters.옵션 || row.옵션 === filters.옵션) &&
         (!filters.외장내장 || row.외장내장 === filters.외장내장) &&
-        (!filters.전시구분 || row.전시구분 === filters.전시구분) &&
+        (!filters.차량상태 || row.차량상태 === filters.차량상태) &&
         (!filters.출고센터 || row.출고센터 === filters.출고센터)
       );
 
@@ -178,7 +191,7 @@
         card.className = "card";
         card.innerHTML = `
           <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
-          <div class="card-item"><strong>차량상태:</strong> ${r.전시구분}</div>
+          <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
           <div class="card-item"><strong>사양:</strong> ${r.트림}</div>
           <div class="card-item"><strong>옵션:</strong> ${r.옵션}</div>
           <div class="card-item"><strong>외장/내장:</strong> ${r.외장내장}</div>
