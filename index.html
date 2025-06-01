@@ -1,6 +1,3 @@
-# 모바일 최적화 + 카드 UI + 개별 필터 초기화 기능 포함 HTML 생성
-
-html_code = """
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -94,7 +91,7 @@ html_code = """
       .then(json => {
         data = json;
         populateFilters();
-        search(); // 초기화면에도 보여줌
+        search();
       });
 
     function populateFilters() {
@@ -172,8 +169,8 @@ html_code = """
           <div class="card-item"><strong>외장/내장:</strong> ${r.외장내장}</div>
           <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
           <div class="card-item"><strong>출고센터:</strong> ${r.출고센터}</div>
-          <div class="card-item"><strong>생산일:</strong> ${r.생산일.slice(0, 10)}</div>
-          <div class="card-item"><strong>판매코드:</strong> ${r.판매코드.replaceAll(',', ' ')}</div>
+          <div class="card-item"><strong>생산일:</strong> ${new Date(r.생산일).toISOString().slice(0, 10)}</div>
+          <div class="card-item"><strong>판매코드:</strong> ${r.판매코드.split(',').map(x => x.trim()).filter(Boolean).join(' ')}</div>
           <div class="card-item highlight"><strong>판매가:</strong> ${r.판매가}</div>
           <div class="card-item highlight"><strong>기본:</strong> ${r.기본}</div>
           <div class="card-item highlight"><strong>판촉:</strong> ${r.판촉}</div>
@@ -188,11 +185,3 @@ html_code = """
   </script>
 </body>
 </html>
-"""
-
-# 저장
-html_path = "/mnt/data/index_card_ui.html"
-with open(html_path, "w", encoding="utf-8") as f:
-    f.write(html_code)
-
-html_path
