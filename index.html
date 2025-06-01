@@ -21,18 +21,15 @@
       font-weight: bold;
       margin: 12px 0;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 14px;
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      padding: 12px;
+      margin-bottom: 12px;
     }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 6px;
-    }
-    th {
-      background-color: #eee;
+    .card-item {
+      margin: 4px 0;
     }
     .highlight {
       color: blue;
@@ -51,12 +48,7 @@
   <button onclick="search()">검색</button>
 
   <div class="count" id="resultCount"></div>
-  <table id="results"><thead><tr>
-    <th>차종</th><th>차량상태</th><th>사양</th><th>옵션</th><th>외장/내장</th><th>생산번호</th>
-    <th>출고센터</th><th>생산일</th><th>판매코드</th><th class="highlight">판매가</th>
-    <th class="highlight">기본</th><th class="highlight">판촉</th>
-    <th class="highlight">특별</th><th class="highlight">계</th><th class="highlight">D/C율</th>
-  </tr></thead><tbody></tbody></table>
+  <div id="results"></div>
 
   <script>
     let data = [];
@@ -125,17 +117,30 @@
       );
 
       document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
-      const tbody = document.querySelector("#results tbody");
-      tbody.innerHTML = "";
+      const container = document.getElementById("results");
+      container.innerHTML = "";
 
       results.forEach(r => {
-        const row = `<tr>
-          <td>${r.차종}</td><td>${r.차량상태}</td><td>${r.트림}</td><td>${r.옵션}</td><td>${r.외장내장}</td>
-          <td>${r.생산번호}</td><td>${r.출고센터}</td><td>${r.생산일}</td><td>${r.판매코드}</td><td class="highlight">${r.판매가}</td>
-          <td class="highlight">${r.기본}</td><td class="highlight">${r.판촉}</td><td class="highlight">${r.특별}</td>
-          <td class="highlight">${r.계}</td><td class="highlight">${r["D/C율"]}</td>
-        </tr>`;
-        tbody.insertAdjacentHTML("beforeend", row);
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
+          <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
+          <div class="card-item"><strong>사양:</strong> ${r.트림}</div>
+          <div class="card-item"><strong>옵션:</strong> ${r.옵션}</div>
+          <div class="card-item"><strong>외장/내장:</strong> ${r.외장내장}</div>
+          <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
+          <div class="card-item"><strong>출고센터:</strong> ${r.출고센터}</div>
+          <div class="card-item"><strong>생산일:</strong> ${r.생산일}</div>
+          <div class="card-item"><strong>판매코드:</strong> ${r.판매코드}</div>
+          <div class="card-item highlight"><strong>판매가:</strong> ${r.판매가}</div>
+          <div class="card-item highlight"><strong>기본:</strong> ${r.기본}</div>
+          <div class="card-item highlight"><strong>판촉:</strong> ${r.판촉}</div>
+          <div class="card-item highlight"><strong>특별:</strong> ${r.특별}</div>
+          <div class="card-item highlight"><strong>계:</strong> ${r.계}</div>
+          <div class="card-item highlight"><strong>D/C율:</strong> ${r["D/C율"]}</div>
+        `;
+        container.appendChild(card);
       });
     }
   </script>
