@@ -53,7 +53,7 @@
       margin-top: 8px;
     }
     .filter-row label {
-      min-width: 70px;
+      min-width: 100px;
     }
   </style>
 </head>
@@ -72,6 +72,10 @@
     <div class="filter-row"><label>트림구분</label>
       <select id="트림구분" onchange="onFilterChange('트림구분')"></select>
       <button onclick="resetOne('트림구분')">🔄 초기화</button>
+    </div>
+    <div class="filter-row"><label>상세사양(선택)</label>
+      <select id="트림" onchange="onFilterChange('트림')"></select>
+      <button onclick="resetOne('트림')">🔄 초기화</button>
     </div>
     <div class="filter-row"><label>옵션</label>
       <select id="옵션" onchange="onFilterChange('옵션')"></select>
@@ -109,7 +113,7 @@
       });
 
     function populateFilters() {
-      const fields = ["차종", "엔진", "트림구분", "옵션", "외장내장", "전시구분", "출고센터"];
+      const fields = ["차종", "엔진", "트림구분", "트림", "옵션", "외장내장", "전시구분", "출고센터"];
       fields.forEach(field => {
         updateFilterOptions(field, data);
       });
@@ -144,6 +148,7 @@
         "차종": document.getElementById("차종").value,
         "엔진": document.getElementById("엔진").value,
         "트림구분": document.getElementById("트림구분").value,
+        "트림": document.getElementById("트림").value,
         "옵션": document.getElementById("옵션").value,
         "외장내장": document.getElementById("외장내장").value,
         "전시구분": document.getElementById("전시구분").value,
@@ -157,6 +162,7 @@
         (!filters.차종 || row.차종 === filters.차종) &&
         (!filters.엔진 || row.엔진 === filters.엔진) &&
         (!filters.트림구분 || row.트림구분 === filters.트림구분) &&
+        (!filters.트림 || row.트림 === filters.트림) &&
         (!filters.옵션 || row.옵션 === filters.옵션) &&
         (!filters.외장내장 || row.외장내장 === filters.외장내장) &&
         (!filters.전시구분 || row.전시구분 === filters.전시구분) &&
