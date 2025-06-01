@@ -52,8 +52,9 @@
 
   <div class="count" id="resultCount"></div>
   <table id="results"><thead><tr>
-    <th>차종</th><th>사양</th><th>옵션</th><th>외장/내장</th><th>생산번호</th>
-    <th>출고센터</th><th>판매가</th><th class="highlight">기본</th><th class="highlight">판촉</th>
+    <th>차종</th><th>차량상태</th><th>사양</th><th>옵션</th><th>외장/내장</th><th>생산번호</th>
+    <th>출고센터</th><th>생산일</th><th>판매코드</th><th class="highlight">판매가</th>
+    <th class="highlight">기본</th><th class="highlight">판촉</th>
     <th class="highlight">특별</th><th class="highlight">계</th><th class="highlight">D/C율</th>
   </tr></thead><tbody></tbody></table>
 
@@ -129,9 +130,9 @@
 
       results.forEach(r => {
         const row = `<tr>
-          <td>${r.차종}</td><td>${r.트림}</td><td>${r.옵션}</td><td>${r.외장내장}</td><td>${r.생산번호}</td>
-          <td>${r.출고센터}</td><td>${r.판매가}</td><td class="highlight">${r.기본}</td>
-          <td class="highlight">${r.판촉}</td><td class="highlight">${r.특별}</td>
+          <td>${r.차종}</td><td>${r.차량상태}</td><td>${r.트림}</td><td>${r.옵션}</td><td>${r.외장내장}</td>
+          <td>${r.생산번호}</td><td>${r.출고센터}</td><td>${r.생산일}</td><td>${r.판매코드}</td><td class="highlight">${r.판매가}</td>
+          <td class="highlight">${r.기본}</td><td class="highlight">${r.판촉}</td><td class="highlight">${r.특별}</td>
           <td class="highlight">${r.계}</td><td class="highlight">${r["D/C율"]}</td>
         </tr>`;
         tbody.insertAdjacentHTML("beforeend", row);
