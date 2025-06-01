@@ -2,65 +2,60 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>차량 재고 검색기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>차량 재고 검색기 (모바일 전용)</title>
   <style>
     body {
       font-family: sans-serif;
-      padding: 20px;
+      padding: 10px;
+      background: #f8f8f8;
     }
     select, button {
-      margin: 5px;
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      font-size: 16px;
+    }
+    .count {
+      color: red;
+      font-weight: bold;
+      margin: 12px 0;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-top: 10px;
+      font-size: 14px;
     }
     th, td {
       border: 1px solid #ccc;
       padding: 6px;
-      text-align: left;
     }
     th {
-      background-color: #f4f4f4;
+      background-color: #eee;
     }
     .highlight {
       color: blue;
       font-weight: bold;
     }
-    .count {
-      color: red;
-      font-weight: bold;
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body>
-  <h1>차량 재고 검색기</h1>
-
-  <div>
-    <label>차종:</label><select id="차종"></select>
-    <label>사양:</label><select id="트림"></select>
-    <label>옵션:</label><select id="옵션"></select>
-    <label>외장/내장:</label><select id="외장내장"></select>
-    <label>전시구분:</label><select id="전시구분"><option value="">(선택)</option></select>
-    <label>출고센터:</label><select id="출고센터"><option value="">(선택)</option></select>
-    <button onclick="search()">검색</button>
-  </div>
+  <h3>차량 재고 검색기</h3>
+  <select id="차종" onchange="updateFilters('차종')"></select>
+  <select id="트림" onchange="updateFilters('트림')"></select>
+  <select id="옵션" onchange="updateFilters('옵션')"></select>
+  <select id="외장내장" onchange="updateFilters('외장내장')"></select>
+  <select id="전시구분"></select>
+  <select id="출고센터"></select>
+  <button onclick="search()">검색</button>
 
   <div class="count" id="resultCount"></div>
-
-  <table id="results">
-    <thead>
-      <tr>
-        <th>차종</th><th>차량상태</th><th>사양</th><th>옵션</th><th>외장/내장</th><th>생산번호</th>
-        <th>출고센터</th><th>생산일</th><th>판매코드</th>
-        <th class="highlight">판매가</th><th class="highlight">기본</th><th class="highlight">판촉</th>
-        <th class="highlight">페스타</th><th class="highlight">특별</th><th class="highlight">계</th><th class="highlight">D/C율</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <table id="results"><thead><tr>
+    <th>차종</th><th>사양</th><th>옵션</th><th>외장/내장</th><th>생산번호</th>
+    <th>출고센터</th><th>판매가</th><th class="highlight">기본</th><th class="highlight">판촉</th>
+    <th class="highlight">특별</th><th class="highlight">계</th><th class="highlight">D/C율</th>
+  </tr></thead><tbody></tbody></table>
 
   <script>
     let data = [];
@@ -69,31 +64,54 @@
       .then(res => res.json())
       .then(json => {
         data = json;
-        populateFilters();
+        updateFilters();
       });
 
-    function populateFilters() {
-      const fields = ["차종", "트림", "옵션", "외장내장", "전시구분", "출고센터"];
-      fields.forEach(field => {
+    function getUniqueOptions(field, filtered = data) {
+      return [...new Set(filtered.map(d => d[field]).filter(Boolean))].sort();
+    }
+
+    function updateFilters(changedField) {
+      const filters = {
+        차종: document.getElementById('차종').value,
+        트림: document.getElementById('트림').value,
+        옵션: document.getElementById('옵션').value,
+        외장내장: document.getElementById('외장내장').value,
+        전시구분: document.getElementById('전시구분').value,
+        출고센터: document.getElementById('출고센터').value
+      };
+
+      let filtered = data;
+      for (let key of ['차종', '트림', '옵션', '외장내장']) {
+        if (filters[key]) {
+          filtered = filtered.filter(d => d[key] === filters[key]);
+        } else if (key === changedField) {
+          break;
+        }
+      }
+
+      ['차종', '트림', '옵션', '외장내장', '전시구분', '출고센터'].forEach(field => {
         const select = document.getElementById(field);
-        const options = [...new Set(data.map(d => d[field]).filter(x => x !== ""))].sort();
-        options.forEach(opt => {
-          const option = document.createElement("option");
-          option.value = opt;
-          option.text = opt;
-          select.appendChild(option);
+        const selected = select.value;
+        select.innerHTML = '<option value="">(전체)</option>';
+        getUniqueOptions(field, filtered).forEach(val => {
+          const opt = document.createElement('option');
+          opt.value = val;
+          opt.text = val;
+          select.appendChild(opt);
         });
+        select.value = selected;
       });
     }
 
     function search() {
       const filters = {
-        차종: document.getElementById("차종").value,
-        트림: document.getElementById("트림").value,
-        옵션: document.getElementById("옵션").value,
-        외장내장: document.getElementById("외장내장").value,
-        전시구분: document.getElementById("전시구분").value,
-        출고센터: document.getElementById("출고센터").value,
+        차종: document.getElementById('차종').value,
+        트림: document.getElementById('트림').value,
+        옵션: document.getElementById('옵션').value,
+        외장내장: document.getElementById('외장내장').value,
+        전시구분: document.getElementById('전시구분').value,
+        출고센터: document.getElementById('출고센터').value
       };
 
       const results = data.filter(row =>
@@ -106,16 +124,15 @@
       );
 
       document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
-
       const tbody = document.querySelector("#results tbody");
       tbody.innerHTML = "";
+
       results.forEach(r => {
         const row = `<tr>
-          <td>${r.차종}</td><td>${r.차량상태}</td><td>${r.트림}</td><td>${r.옵션}</td><td>${r.외장내장}</td>
-          <td>${r.생산번호}</td><td>${r.출고센터}</td><td>${r.생산일}</td><td>${r.판매코드}</td>
-          <td class="highlight">${r.판매가}</td><td class="highlight">${r.기본}</td>
-          <td class="highlight">${r.판촉}</td><td class="highlight">${r.페스타}</td>
-          <td class="highlight">${r.특별}</td><td class="highlight">${r.계}</td><td class="highlight">${r["D/C율"]}</td>
+          <td>${r.차종}</td><td>${r.트림}</td><td>${r.옵션}</td><td>${r.외장내장}</td><td>${r.생산번호}</td>
+          <td>${r.출고센터}</td><td>${r.판매가}</td><td class="highlight">${r.기본}</td>
+          <td class="highlight">${r.판촉}</td><td class="highlight">${r.특별}</td>
+          <td class="highlight">${r.계}</td><td class="highlight">${r["D/C율"]}</td>
         </tr>`;
         tbody.insertAdjacentHTML("beforeend", row);
       });
