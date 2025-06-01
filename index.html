@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>경남 H-SUPER SAVE 검색기</title>
+  <title>차량 재고 검색기</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -53,7 +53,7 @@
       margin-top: 8px;
     }
     .filter-row label {
-      min-width: 65px;
+      min-width: 70px;
     }
   </style>
 </head>
@@ -65,7 +65,7 @@
       <select id="차종" onchange="onFilterChange('차종')"></select>
       <button onclick="resetOne('차종')">🔄 초기화</button>
     </div>
-    <div class="filter-row"><label>사양</label>
+    <div class="filter-row"><label>트림</label>
       <select id="트림" onchange="onFilterChange('트림')"></select>
       <button onclick="resetOne('트림')">🔄 초기화</button>
     </div>
@@ -85,6 +85,14 @@
       <select id="출고센터" onchange="onFilterChange('출고센터')"></select>
       <button onclick="resetOne('출고센터')">🔄 초기화</button>
     </div>
+    <div class="filter-row"><label>엔진</label>
+      <select id="엔진" onchange="onFilterChange('엔진')"></select>
+      <button onclick="resetOne('엔진')">🔄 초기화</button>
+    </div>
+    <div class="filter-row"><label>트림구분</label>
+      <select id="트림구분" onchange="onFilterChange('트림구분')"></select>
+      <button onclick="resetOne('트림구분')">🔄 초기화</button>
+    </div>
 
     <div style="margin-top: 12px;">
       <button onclick="search()">🔍 검색</button>
@@ -97,7 +105,7 @@
   <script>
     let data = [];
 
-    fetch('inventory_data_final.json')
+    fetch('inventory_data_final_updated.json')
       .then(res => res.json())
       .then(json => {
         data = json;
@@ -105,7 +113,7 @@
       });
 
     function populateFilters() {
-      const fields = ["차종", "트림", "옵션", "외장내장", "전시구분", "출고센터"];
+      const fields = ["차종", "트림", "옵션", "외장내장", "전시구분", "출고센터", "엔진", "트림구분"];
       fields.forEach(field => {
         updateFilterOptions(field, data);
       });
@@ -126,19 +134,12 @@
     }
 
     function onFilterChange(changedId) {
-      const currentFilters = getFilters();
-      const filtered = data.filter(row =>
-        (!currentFilters["차종"] || row["차종"] === currentFilters["차종"])
-      );
-      ["트림", "옵션", "외장내장"].forEach(field => {
-        if (field !== changedId) updateFilterOptions(field, filtered);
-      });
+      search();
     }
 
     function resetOne(fieldId) {
       const select = document.getElementById(fieldId);
       if (select) select.value = "";
-      onFilterChange(fieldId);
       search();
     }
 
@@ -150,6 +151,8 @@
         "외장내장": document.getElementById("외장내장").value,
         "전시구분": document.getElementById("전시구분").value,
         "출고센터": document.getElementById("출고센터").value,
+        "엔진": document.getElementById("엔진").value,
+        "트림구분": document.getElementById("트림구분").value
       };
     }
 
@@ -161,7 +164,9 @@
         (!filters.옵션 || row.옵션 === filters.옵션) &&
         (!filters.외장내장 || row.외장내장 === filters.외장내장) &&
         (!filters.전시구분 || row.전시구분 === filters.전시구분) &&
-        (!filters.출고센터 || row.출고센터 === filters.출고센터)
+        (!filters.출고센터 || row.출고센터 === filters.출고센터) &&
+        (!filters.엔진 || row.엔진 === filters.엔진) &&
+        (!filters.트림구분 || row.트림구분 === filters.트림구분)
       );
 
       document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
@@ -173,19 +178,19 @@
         card.className = "card";
         card.innerHTML = `
           <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
-          <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
-          <div class="card-item"><strong>사양:</strong> ${r.사양}</div>
+          <div class="card-item"><strong>차량상태:</strong> ${r.전시구분}</div>
+          <div class="card-item"><strong>사양:</strong> ${r.트림}</div>
           <div class="card-item"><strong>옵션:</strong> ${r.옵션}</div>
           <div class="card-item"><strong>외장/내장:</strong> ${r.외장내장}</div>
           <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
           <div class="card-item"><strong>출고센터:</strong> ${r.출고센터}</div>
-          <div class="card-item"><strong>생산일:</strong> ${new Date(r.생산일).toISOString().slice(0, 10)}</div>
-          <div class="card-item"><strong>판매코드:</strong> ${r.판매코드.split(',').map(x => x.trim()).filter(Boolean).join(' ')}</div>
+          <div class="card-item"><strong>생산일:</strong> ${r.생산일}</div>
+          <div class="card-item"><strong>판매코드:</strong> ${r.판매코드}</div>
           <div class="card-item highlight"><strong>판매가:</strong> ${r.판매가}</div>
           <div class="card-item highlight"><strong>기본:</strong> ${r.기본}</div>
           <div class="card-item highlight"><strong>판촉:</strong> ${r.판촉}</div>
           <div class="card-item highlight"><strong>계:</strong> ${r.계}</div>
-          <div class="card-item highlight"><strong>D/C율:</strong> ${(parseFloat(r["D/C율"]) * 100).toFixed(1)}%</div>
+          <div class="card-item highlight"><strong>D/C율:</strong> ${r["D/C율"]}%</div>
         `;
         container.appendChild(card);
       });
