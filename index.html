@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -33,7 +32,7 @@
   <h2>🚗 경남 H-SUPER SAVE 검색기</h2>
   <div class="banner">
     <strong>내 손에서 편하게!</strong> H-SUPER SAVE 대상 재고를 확인할 수 있습니다! (6/2 월 초기재고 기준)<br>
-    6/2(월) 10시부터 배정이 시작되는 만큼, 가망 고객님께 빠르게 연락드려서 좋은 조건 재고를 선점하세요!<br><br>
+    6/2(월) 10시부터 배정이 시작되는 만큼, 가망 고객님\uuaed8 빠른 연락드릴수있게 해서 좋은 조건 재고를 선점하세요!<br><br>
     (아래에서 검색하고 싶으신 사양을 선택하고, <strong>"검색"</strong>을 누르면 재고 검색이 가능합니다. 각 항목 옆의 <strong>초기화</strong> 버튼을 누르면 다시 선택할 수 있어요!)
   </div>
 
@@ -79,7 +78,7 @@
     const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장칼라", "내장칼라", "차량상태", "출고센터"];
     const dependentFilters = ["트림구분", "트림", "옵션", "외장칼라", "내장칼라"];
 
-    fetch('inventory_data_final_clean_with_discount.json')
+    fetch('inventory_data_final_clean_with_discount_v2.json')
       .then(res => res.json())
       .then(json => {
         data = json;
@@ -173,6 +172,8 @@
       results.forEach(r => {
         const card = document.createElement("div");
         card.className = "card";
+        const 생산일_포맷 = r.생산일 ? new Date(r.생산일).toISOString().split("T")[0] : "";
+
         card.innerHTML = `
           <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
           <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
@@ -182,11 +183,11 @@
           <div class="card-item"><strong>내장칼라:</strong> ${r.내장칼라}</div>
           <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
           <div class="card-item"><strong>출고센터:</strong> ${r.출고센터}</div>
-          <div class="card-item"><strong>생산일:</strong> ${r.생산일}</div>
+          <div class="card-item"><strong>생산일:</strong> ${생산일_포맷}</div>
           <div class="card-item"><strong>판매코드:</strong> ${r.판매코드}</div>
           <div class="card-item highlight"><strong>판매가(만원):</strong> ${r.판매가}</div>
-          <div class="card-item highlight"><strong>기본조건(만원):</strong> ${r.기본}</div>
-          <div class="card-item highlight"><strong>슈퍼세이브 조건(만원):</strong> ${r.판촉}</div>
+          <div class="card-item highlight"><strong>기본조건(만원):</strong> ${r.기본 ?? "-"}</div>
+          <div class="card-item highlight"><strong>슈퍼세이브 조건(만원):</strong> ${r.판촉 ?? "-"}</div>
           <div class="card-item highlight"><strong>조건 계:</strong> ${r.계}</div>
           <div class="card-item highlight"><strong>D/C율:</strong> ${r["D/C율"]}</div>
         `;
