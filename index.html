@@ -167,6 +167,7 @@
     function search() {
       const filters = getFilters();
       const results = data.filter(row =>
+        row.배정여부 === "미배정" && 
         (!filters.차종 || row.차종 === filters.차종) &&
         (!filters.엔진 || row.엔진 === filters.엔진) &&
         (!filters.트림구분 || row.트림구분 === filters.트림구분) &&
