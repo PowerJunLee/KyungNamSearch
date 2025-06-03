@@ -58,6 +58,7 @@
   <script>
     let data = [];
     const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장칼라", "내장칼라", "차량상태", "출고센터"];
+    const dependentFilters = ["트림구분", "트림", "옵션", "외장칼라", "내장칼라"];
 
     fetch('inventorydata_converted.json')
       .then(res => res.json())
@@ -98,6 +99,14 @@
 
     function onFilterChange() {
       const filters = getFilters();
+      const carType = filters["차종"];
+      const engine = filters["엔진"];
+      const enable = carType && engine;
+
+      dependentFilters.forEach(id => {
+        const el = document.getElementById(id);
+        el.disabled = !enable;
+      });
 
       filterOrder.forEach(field => {
         const select = document.getElementById(field);
