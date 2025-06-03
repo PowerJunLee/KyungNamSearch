@@ -38,58 +38,45 @@
 <body>
   <h2>🚗 경남 H-SUPER SAVE 검색기</h2>
   <div class="banner">
-    <strong>언제, 어디서나 간편하게!</strong> H-SUPER SAVE 대상 재고를 확인할 수 있습니다! (6/5 목 06:00 미배정 재고 기준)<br>
+    <strong>어전에, 어디서나 간편하게!</strong> H-SUPER SAVE 대상 재고를 확인할 수 있습니다!<br>
     <strong>가망고객 점검하시어 좋은 조건의 재고를 선점</strong>하세요!<br><br>
     - 아래 필터에서 사양을 선택하시고 <strong>"검색"</strong>을 누르면 재고 검색이 가능합니다.<br>
     - <strong>일부만 선택하셔도 조회가 가능</strong>합니다.<br>
-    - <strong>다른 조건을 검색</strong>하고 싶으면 <strong>초기화</strong> 버튼을 눌러주세요!<br>
+    - <strong>다른 조건을 검색</strong>하고 싶으면 <strong>초기화</strong> 버튼을 누르세요!<br>
     - 트림, 상세사양, 옵션, 칼라는 '차종 및 엔진' 선택 시 설정 가능합니다.
   </div>
 
-  <!-- 필터 영역 -->
-  <div id="filters">
-    <div class="filter-row"><label>차종</label><select id="차종" onchange="onFilterChange()"></select><button onclick="resetOne('차종')">🔄 초기화</button></div>
-    <div class="filter-row"><label>엔진</label><select id="엔진" onchange="onFilterChange()"></select><button onclick="resetOne('엔진')">🔄 초기화</button></div>
-    <div class="filter-row"><label>트림구분</label><select id="트림구분" onchange="onFilterChange()" disabled></select><button onclick="resetOne('트림구분')">🔄 초기화</button></div>
-    <div class="filter-row"><label>상세사양</label><select id="트림" onchange="onFilterChange()" disabled></select><button onclick="resetOne('트림')">🔄 초기화</button></div>
-    <div class="filter-row"><label>옵션</label><select id="옵션" onchange="onFilterChange()" disabled></select><button onclick="resetOne('옵션')">🔄 초기화</button></div>
-    <div class="filter-row"><label>외장칼라</label><select id="외장칼라" onchange="onFilterChange()" disabled></select><button onclick="resetOne('외장칼라')">🔄 초기화</button></div>
-    <div class="filter-row"><label>내장칼라</label><select id="내장칼라" onchange="onFilterChange()" disabled></select><button onclick="resetOne('내장칼라')">🔄 초기화</button></div>
-    <div class="filter-row"><label>차량상태</label><select id="차량상태" onchange="onFilterChange()"></select><button onclick="resetOne('차량상태')">🔄 초기화</button></div>
-    <div class="filter-row"><label>출고센터</label><select id="출고센터" onchange="onFilterChange()"></select><button onclick="resetOne('출고센터')">🔄 초기화</button></div>
-  </div>
-
+  <div id="filters"></div>
   <div style="margin-top: 12px;">
     <button onclick="search()" style="width: 100%; font-size: 16px; padding: 10px;">🔍 검색</button>
   </div>
-
   <div class="count" id="resultCount"></div>
   <div id="results"></div>
 
   <script>
     let data = [];
     const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장칼라", "내장칼라", "차량상태", "출고센터"];
-    const dependentFilters = ["트림구분", "트림", "옵션", "외장칼라", "내장칼라"];
 
-    fetch('inventorydata_converted.json')
+    fetch("inventorydata_converted.json")
       .then(res => res.json())
       .then(json => {
         data = json;
-        populateFilters(data);
-        controlDependentFilters();
+        createFilterUI();
+        onFilterChange();
       });
 
-    function populateFilters(dataset) {
+    function createFilterUI() {
+      const container = document.getElementById("filters");
+      container.innerHTML = "";
       filterOrder.forEach(field => {
-        const select = document.getElementById(field);
-        select.innerHTML = '<option value="">(전체)</option>';
-        const values = [...new Set(dataset.map(d => d[field]).filter(v => v && v !== "null" && v !== "NaN"))];
-        values.sort().forEach(v => {
-          const opt = document.createElement("option");
-          opt.value = v;
-          opt.textContent = v;
-          select.appendChild(opt);
-        });
+        const row = document.createElement("div");
+        row.className = "filter-row";
+        row.innerHTML = `
+          <label>\${field}</label>
+          <select id="\${field}" onchange="onFilterChange()"></select>
+          <button onclick="resetOne('\${field}')">🔄 초기화</button>
+        `;
+        container.appendChild(row);
       });
     }
 
@@ -102,24 +89,33 @@
     }
 
     function resetOne(fieldId) {
-      const select = document.getElementById(fieldId);
-      if (select) select.value = "";
+      document.getElementById(fieldId).value = "";
       onFilterChange();
     }
 
-    function controlDependentFilters() {
-      const carType = document.getElementById("차종").value;
-      const engine = document.getElementById("엔진").value;
-      const enable = carType && engine;
-      dependentFilters.forEach(id => {
-        const el = document.getElementById(id);
-        el.disabled = !enable;
-        if (!enable) el.innerHTML = '<option value="">(전체)</option>';
-      });
-    }
-
     function onFilterChange() {
-      controlDependentFilters();  // UI만 제어
+      const filters = getFilters();
+      // 선택된 조건을 제외한 나머지 필터에 맞는 유효값만 추출해 다시 필터 구성
+      filterOrder.forEach(field => {
+        const select = document.getElementById(field);
+        const current = select.value;
+
+        let relevantData = data.filter(row =>
+          filterOrder.every(f => f === field || !filters[f] || row[f] === filters[f])
+        );
+
+        const values = [...new Set(relevantData.map(d => d[field]).filter(v => v && v !== "null" && v !== "NaN"))];
+        values.sort();
+
+        select.innerHTML = '<option value="">(전체)</option>';
+        values.forEach(v => {
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = v;
+          if (v === current) opt.selected = true;
+          select.appendChild(opt);
+        });
+      });
     }
 
     function search() {
@@ -137,8 +133,7 @@
         (!filters.출고센터 || row.출고센터 === filters.출고센터)
       );
 
-      document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
-
+      document.getElementById("resultCount").textContent = `검색 결과는 총 \${results.length}대입니다.`;
       const container = document.getElementById("results");
       container.innerHTML = "";
       results.forEach(r => {
@@ -146,19 +141,19 @@
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-          <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
-          <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
-          <div class="card-item"><strong>사양:</strong> ${r.트림}</div>
-          <div class="card-item"><strong>옵션:</strong> ${r.옵션}</div>
-          <div class="card-item"><strong>외장칼라:</strong> ${r.외장칼라}</div>
-          <div class="card-item"><strong>내장칼라:</strong> ${r.내장칼라}</div>
-          <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
-          <div class="card-item"><strong>출고센터:</strong> ${r.출고센터}</div>
-          <div class="card-item"><strong>생산일:</strong> ${생산일_포맷}</div>
-          <div class="card-item" style="color: red;"><strong>판매코드:</strong> ${r.판매코드}</div>
-          <div class="card-item highlight"><strong>판매가(만원):</strong> ${r.판매가}</div>
-          <div class="card-item highlight"><strong>조건 계(만원):</strong> ${r.계}</div>
-          <div class="card-item highlight"><strong>D/C율:</strong> ${r["D/C율"]}</div>
+          <div class="card-item"><strong>차종:</strong> \${r.차종}</div>
+          <div class="card-item"><strong>차량상태:</strong> \${r.차량상태}</div>
+          <div class="card-item"><strong>사양:</strong> \${r.트림}</div>
+          <div class="card-item"><strong>옵션:</strong> \${r.옵션}</div>
+          <div class="card-item"><strong>외장칼라:</strong> \${r.외장칼라}</div>
+          <div class="card-item"><strong>내장칼라:</strong> \${r.내장칼라}</div>
+          <div class="card-item"><strong>생산번호:</strong> \${r.생산번호}</div>
+          <div class="card-item"><strong>출고센터:</strong> \${r.출고센터}</div>
+          <div class="card-item"><strong>생산일:</strong> \${생산일_포맷}</div>
+          <div class="card-item" style="color: red;"><strong>판매코드:</strong> \${r.판매코드}</div>
+          <div class="card-item highlight"><strong>판매가(만원):</strong> \${r.판매가}</div>
+          <div class="card-item highlight"><strong>조건 계(만원):</strong> \${r.계}</div>
+          <div class="card-item highlight"><strong>D/C율:</strong> \${r["D/C율"]}</div>
         `;
         container.appendChild(card);
       });
