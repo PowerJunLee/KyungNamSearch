@@ -31,8 +31,8 @@
 <body>
   <h2>🚗 경남 H-SUPER SAVE 검색기</h2>
   <div class="banner">
-    <strong>언제, 어디서나 간편하게!</strong> H-SUPER SAVE 대상 재고를 확인할 수 있습니다! (6/2 월 초기재고 기준)<br>
-    <strong>6/2(월) 10시부터 배정이 시작</strong>되는 만큼, <strong>가망고객 점검하시어 좋은 조건의 재고를 선점</strong>하세요!<br><br>
+    <strong>언제, 어디서나 간편하게!</strong> H-SUPER SAVE 대상 재고를 확인할 수 있습니다! (6/5 목 06:00 미배정 재고 기준)<br>
+    <strong>가망고객 점검하시어 좋은 조건의 재고를 선점</strong>하세요!<br><br>
     - 아래 필터에서 사양을 선택하시고 <strong>"검색"</strong>을 누르면 재고 검색이 가능합니다.<br>
     - <strong>일부만 선택하셔도 조회가 가능</strong>합니다.<br>
     - <strong>다른 조건을 검색</strong>하고 싶으면 <strong>초기화</strong> 버튼을 눌러주세요!<br>
@@ -81,7 +81,7 @@
     const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장칼라", "내장칼라", "차량상태", "출고센터"];
     const dependentFilters = ["트림구분", "트림", "옵션", "외장칼라", "내장칼라"];
 
-    fetch('inventory_data_final_clean_with_discount.json')
+    fetch('inventory_data_with_assignment_status.json')
       .then(res => res.json())
       .then(json => {
         data = json;
@@ -99,6 +99,7 @@
     function onFilterChange() {
       const filters = getFilters();
       filteredData = data.filter(row =>
+        row["배정여부"] === "미배정" &&
         (!filters.차종 || row.차종 === filters.차종) &&
         (!filters.엔진 || row.엔진 === filters.엔진) &&
         (!filters.트림구분 || row.트림구분 === filters.트림구분) &&
