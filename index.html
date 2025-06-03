@@ -59,6 +59,17 @@
     let data = [];
     const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장칼라", "내장칼라", "차량상태", "출고센터"];
     const dependentFilters = ["트림구분", "트림", "옵션", "외장칼라", "내장칼라"];
+    const fieldLabelMap = {
+      "차종": "차종",
+      "엔진": "엔진",
+      "트림구분": "트림",
+      "트림": "상세사양",
+      "옵션": "옵션",
+      "외장칼라": "외장칼라",
+      "내장칼라": "내장칼라",
+      "차량상태": "차량상태",
+      "출고센터": "출고센터"
+    };
 
     fetch('inventorydata_converted.json')
       .then(res => res.json())
@@ -70,12 +81,12 @@
 
     function renderFilters() {
       const container = document.getElementById("filters");
-      container.innerHTML = '';
+      container.innerHTML = "";
       filterOrder.forEach(field => {
         const row = document.createElement("div");
         row.className = "filter-row";
         row.innerHTML = `
-          <label>${field}</label>
+          <label for="${field}">${fieldLabelMap[field] || field}</label>
           <select id="${field}" onchange="onFilterChange()"></select>
           <button onclick="resetOne('${field}')">🔄 초기화</button>
         `;
@@ -97,27 +108,33 @@
       onFilterChange();
     }
 
-    function onFilterChange() {
-      const filters = getFilters();
-      const carType = filters["차종"];
-      const engine = filters["엔진"];
+    function controlDependentFilters() {
+      const carType = document.getElementById("차종").value;
+      const engine = document.getElementById("엔진").value;
       const enable = carType && engine;
 
       dependentFilters.forEach(id => {
         const el = document.getElementById(id);
         el.disabled = !enable;
+        if (!enable) {
+          el.innerHTML = '<option value="">(전체)</option>';
+          el.value = "";
+        }
       });
+    }
+
+    function onFilterChange() {
+      const filters = getFilters();
 
       filterOrder.forEach(field => {
         const select = document.getElementById(field);
         const currentValue = select.value;
 
-        const relevantData = data.filter(row =>
+        let relevantData = data.filter(row =>
           filterOrder.every(f => f === field || !filters[f] || row[f] === filters[f])
         );
 
-        const values = [...new Set(relevantData.map(d => d[field]).filter(v => v && v !== "null" && v !== "NaN"))];
-        values.sort();
+        const values = [...new Set(relevantData.map(d => d[field]).filter(v => v && v !== "null" && v !== "NaN"))].sort();
 
         select.innerHTML = '<option value="">(전체)</option>';
         values.forEach(v => {
@@ -128,27 +145,21 @@
           select.appendChild(opt);
         });
       });
+
+      controlDependentFilters();
     }
 
     function search() {
       const filters = getFilters();
       const results = data.filter(row =>
         String(row.배정여부 || "").trim() === "미배정" &&
-        (!filters.차종 || row.차종 === filters.차종) &&
-        (!filters.엔진 || row.엔진 === filters.엔진) &&
-        (!filters.트림구분 || row.트림구분 === filters.트림구분) &&
-        (!filters.트림 || row.트림 === filters.트림) &&
-        (!filters.옵션 || row.옵션 === filters.옵션) &&
-        (!filters.외장칼라 || row.외장칼라 === filters.외장칼라) &&
-        (!filters.내장칼라 || row.내장칼라 === filters.내장칼라) &&
-        (!filters.차량상태 || row.차량상태 === filters.차량상태) &&
-        (!filters.출고센터 || row.출고센터 === filters.출고센터)
+        filterOrder.every(key => !filters[key] || row[key] === filters[key])
       );
 
       document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
-
       const container = document.getElementById("results");
       container.innerHTML = "";
+
       results.forEach(r => {
         const 생산일_포맷 = r.생산일 ? new Date(r.생산일).toISOString().split("T")[0] : "";
         const card = document.createElement("div");
@@ -156,7 +167,7 @@
         card.innerHTML = `
           <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
           <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
-          <div class="card-item"><strong>사양:</strong> ${r.트림}</div>
+          <div class="card-item"><strong>상세사양:</strong> ${r.트림}</div>
           <div class="card-item"><strong>옵션:</strong> ${r.옵션}</div>
           <div class="card-item"><strong>외장칼라:</strong> ${r.외장칼라}</div>
           <div class="card-item"><strong>내장칼라:</strong> ${r.내장칼라}</div>
