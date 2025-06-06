@@ -161,7 +161,7 @@
       container.innerHTML = "";
 
       results.forEach(r => {
-        const 생산일_포맷 = r.생산일 ? new Date(Number(r.생산일)).toISOString().split("T")[0] : "";
+        const 생산일_포맷 = r.생산일 ? new Date(r.생산일).toISOString().split("T")[0] : "";
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = 
