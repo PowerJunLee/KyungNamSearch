@@ -4,13 +4,6 @@
   <meta charset="UTF-8" />
   <title>경남 H-SUPER SAVE 검색기</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y7F8S5BF00"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-Y7F8S5BF00');
-  </script>
   <style>
     body { font-family: sans-serif; padding: 15px; background-color: #f2f2f2; }
     h2 { margin-bottom: 10px; }
@@ -60,15 +53,9 @@
     const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장칼라", "내장칼라", "차량상태", "출고센터"];
     const dependentFilters = ["트림구분", "트림", "옵션", "외장칼라", "내장칼라"];
     const fieldLabelMap = {
-      "차종": "차종",
-      "엔진": "엔진",
-      "트림구분": "트림",
-      "트림": "상세사양",
-      "옵션": "옵션",
-      "외장칼라": "외장칼라",
-      "내장칼라": "내장칼라",
-      "차량상태": "차량상태",
-      "출고센터": "출고센터"
+      "차종": "차종", "엔진": "엔진", "트림구분": "트림", "트림": "상세사양",
+      "옵션": "옵션", "외장칼라": "외장칼라", "내장칼라": "내장칼라",
+      "차량상태": "차량상태", "출고센터": "출고센터"
     };
 
     fetch('inventorydata_converted_0606.json')
@@ -85,11 +72,11 @@
       filterOrder.forEach(field => {
         const row = document.createElement("div");
         row.className = "filter-row";
-        row.innerHTML = 
+        row.innerHTML = `
           <label for="${field}">${fieldLabelMap[field] || field}</label>
           <select id="${field}" onchange="onFilterChange()"></select>
           <button onclick="resetOne('${field}')">🔄 초기화</button>
-        ;
+        `;
         container.appendChild(row);
       });
     }
@@ -134,7 +121,12 @@
           filterOrder.every(f => f === field || !filters[f] || row[f] === filters[f])
         );
 
-        const values = [...new Set(relevantData.map(d => d[field]).filter(v => v && v !== "null" && v !== "NaN"))].sort();
+        // 🔧 필터 옵션에서 빈 문자열/이상치 제거
+        const values = [...new Set(
+          relevantData
+            .map(d => d[field])
+            .filter(v => v !== undefined && v !== null && v !== "" && v !== "null" && v !== "NaN")
+        )].sort();
 
         select.innerHTML = '<option value="">(전체)</option>';
         values.forEach(v => {
@@ -156,15 +148,18 @@
         filterOrder.every(key => !filters[key] || row[key] === filters[key])
       );
 
-      document.getElementById("resultCount").textContent = 검색 결과는 총 ${results.length}대입니다.;
+      document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
       const container = document.getElementById("results");
       container.innerHTML = "";
 
       results.forEach(r => {
-        const 생산일_포맷 = r.생산일 ? new Date(r.생산일).toISOString().split("T")[0] : "";
+        const 생산일_포맷 = r.생산일
+          ? new Date(Number(r.생산일)).toISOString().split("T")[0]
+          : "";
+
         const card = document.createElement("div");
         card.className = "card";
-        card.innerHTML = 
+        card.innerHTML = `
           <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
           <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
           <div class="card-item"><strong>상세사양:</strong> ${r.트림}</div>
@@ -178,7 +173,7 @@
           <div class="card-item highlight"><strong>판매가(만원):</strong> ${r.판매가}</div>
           <div class="card-item highlight"><strong>조건 계(만원):</strong> ${r.계}</div>
           <div class="card-item highlight"><strong>D/C율:</strong> ${r["D/C율"]}</div>
-        ;
+        `;
         container.appendChild(card);
       });
     }
