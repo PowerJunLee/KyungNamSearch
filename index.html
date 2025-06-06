@@ -1,352 +1,187 @@
 <!DOCTYPE html>
-
 <html lang="ko">
-
 <head>
-
-  <meta charset="UTF-8" />
-
-  <title>경남 H-SUPER SAVE 검색기</title>
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y7F8S5BF00"></script>
-
-  <script>
-
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag(){dataLayer.push(arguments);}
-
-    gtag('js', new Date());
-
-    gtag('config', 'G-Y7F8S5BF00');
-
-  </script>
-
-  <style>
-
-    body { font-family: sans-serif; padding: 15px; background-color: #f2f2f2; }
-
-    h2 { margin-bottom: 10px; }
-
-    .banner {
-
-      background-color: #fff4e5;
-
-      border-left: 6px solid #ff8c00;
-
-      padding: 12px 15px;
-
-      margin-bottom: 20px;
-
-      border-radius: 6px;
-
-      line-height: 1.6;
-
-      font-size: 14px;
-
-    }
-
-    .banner strong { color: #d35400; }
-
-    label { font-size: 14px; }
-
-    select { width: 100%; padding: 8px; font-size: 14px; margin-bottom: 5px; }
-
-    button { padding: 4px 6px; margin-left: 5px; font-size: 12px; white-space: nowrap; }
-
-    .card { background: white; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 15px; margin-top: 15px; }
-
-    .card-item { margin-bottom: 5px; font-size: 14px; }
-
-    .highlight { color: blue; font-weight: bold; }
-
-    .count { color: red; font-weight: bold; margin-top: 15px; font-size: 16px; }
-
-    .filter-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
-
-    .filter-row label { min-width: 100px; }
-
-  </style>
-
+  <meta charset="UTF-8" />
+  <title>경남 H-SUPER SAVE 검색기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y7F8S5BF00"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Y7F8S5BF00');
+  </script>
+  <style>
+    body { font-family: sans-serif; padding: 15px; background-color: #f2f2f2; }
+    h2 { margin-bottom: 10px; }
+    .banner {
+      background-color: #fff4e5;
+      border-left: 6px solid #ff8c00;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .banner strong { color: #d35400; }
+    label { font-size: 14px; }
+    select { width: 100%; padding: 8px; font-size: 14px; margin-bottom: 5px; }
+    button { padding: 4px 6px; margin-left: 5px; font-size: 12px; white-space: nowrap; }
+    .card { background: white; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 15px; margin-top: 15px; }
+    .card-item { margin-bottom: 5px; font-size: 14px; }
+    .highlight { color: blue; font-weight: bold; }
+    .count { color: red; font-weight: bold; margin-top: 15px; font-size: 16px; }
+    .filter-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+    .filter-row label { min-width: 100px; }
+  </style>
 </head>
-
 <body>
-
-  <h2>🚗 경남 H-SUPER SAVE 검색기</h2>
-
-  <div class="banner">
-
-    <strong>언제, 어디서나 간편하게!</strong> H-SUPER SAVE 대상 재고를 확인할 수 있습니다! (6/6 금 06:00 미배정 재고 기준)<br>
-
-    <strong>가망고객 점검하시어 좋은 조건의 재고를 선점</strong>하세요!<br><br>
-
-    - 아래 필터에서 사양을 선택하시고 <strong>"검색"</strong>을 누르면 재고 검색이 가능합니다.<br>
-
-    - <strong>일부만 선택하셔도 조회가 가능</strong>합니다.<br>
-
-    - <strong>다른 조건을 검색</strong>하고 싶으면 <strong>초기화</strong> 버튼을 눌러주세요!<br>
-
-    - 트림, 상세사양, 옵션, 칼라는 '차종 및 엔진' 선택 시 설정 가능합니다.
-
-  </div>
-
-
-
-  <div id="filters"></div>
-
-
-
-  <div style="margin-top: 12px;">
-
-    <button onclick="search()" style="width: 100%; font-size: 16px; padding: 10px;">🔍 검색</button>
-
-  </div>
-
-
-
-  <div class="count" id="resultCount"></div>
-
-  <div id="results"></div>
-
-
-
-  <script>
-
-    let data = [];
-
-    const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장칼라", "내장칼라", "차량상태", "출고센터"];
-
-    const dependentFilters = ["트림구분", "트림", "옵션", "외장칼라", "내장칼라"];
-
-    const fieldLabelMap = {
-
-      "차종": "차종",
-
-      "엔진": "엔진",
-
-      "트림구분": "트림",
-
-      "트림": "상세사양",
-
-      "옵션": "옵션",
-
-      "외장칼라": "외장칼라",
-
-      "내장칼라": "내장칼라",
-
-      "차량상태": "차량상태",
-
-      "출고센터": "출고센터"
-
-    };
-
-
-
-    fetch('inventorydata_converted_0606.json')
-
-      .then(res => res.json())
-
-      .then(json => {
-
-        data = json;
-
-        renderFilters();
-
-        onFilterChange();
-
-      });
-
-
-
-    function renderFilters() {
-
-      const container = document.getElementById("filters");
-
-      container.innerHTML = "";
-
-      filterOrder.forEach(field => {
-
-        const row = document.createElement("div");
-
-        row.className = "filter-row";
-
-        row.innerHTML = `
-
-          <label for="${field}">${fieldLabelMap[field] || field}</label>
-
-          <select id="${field}" onchange="onFilterChange()"></select>
-
-          <button onclick="resetOne('${field}')">🔄 초기화</button>
-
-        `;
-
-        container.appendChild(row);
-
-      });
-
-    }
-
-
-
-    function getFilters() {
-
-      const obj = {};
-
-      filterOrder.forEach(id => {
-
-        obj[id] = document.getElementById(id).value;
-
-      });
-
-      return obj;
-
-    }
-
-
-
-    function resetOne(fieldId) {
-
-      const select = document.getElementById(fieldId);
-
-      if (select) select.value = "";
-
-      onFilterChange();
-
-    }
-
-
-
-    function controlDependentFilters() {
-
-      const carType = document.getElementById("차종").value;
-
-      const engine = document.getElementById("엔진").value;
-
-      const enable = carType && engine;
-
-
-
-      dependentFilters.forEach(id => {
-
-        const el = document.getElementById(id);
-
-        el.disabled = !enable;
-
-        if (!enable) {
-
-          el.innerHTML = '<option value="">(전체)</option>';
-
-          el.value = "";
-
-        }
-
-      });
-
-    }
-
-
-
-    function onFilterChange() {
-
-      const filters = getFilters();
-
-
-
-      filterOrder.forEach(field => {
-
-        const select = document.getElementById(field);
-
-        const currentValue = select.value;
-
-
-
-        let relevantData = data.filter(row =>
-
-          filterOrder.every(f => f === field || !filters[f] || row[f] === filters[f])
-
-        );
-
-
-
-        const values = [...new Set(relevantData.map(d => d[field]).filter(v => v && v !== "null" && v !== "NaN"))].sort();
-
-
-
-        select.innerHTML = '<option value="">(전체)</option>';
-
-        values.forEach(v => {
-
-          const opt = document.createElement("option");
-
-          opt.value = v;
-
-          opt.textContent = v;
-
-          if (v === currentValue) opt.selected = true;
-
-          select.appendChild(opt);
-
-        });
-
-      });
-
-
-
-      controlDependentFilters();
-
-    }
-
-
-
-function createItem(label, value, options = {}) {
-  const div = document.createElement("div");
-  div.className = "card-item";
-  if (options.highlight) div.classList.add("highlight");
-  if (options.red) div.style.color = "red";
-  div.innerHTML = `<strong>${label}:</strong> ${value ?? "-"}`;
-  return div;
-}
-
-function search() {
-  const filters = getFilters();
-  const results = data.filter(row =>
-    String(row.배정여부 || "").trim() === "미배정" &&
-    filterOrder.every(key => !filters[key] || row[key] === filters[key])
-  );
-
-  document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
-  const container = document.getElementById("results");
-  container.innerHTML = "";
-
-  results.forEach(r => {
-    const card = document.createElement("div");
-    card.className = "card";
-    const 생산일_포맷 = r.생산일 ? new Date(r.생산일).toISOString().split("T")[0] : "-";
-
-    card.appendChild(createItem("차종", r.차종));
-    card.appendChild(createItem("차량상태", r.차량상태));
-    card.appendChild(createItem("상세사양", r.트림));
-    card.appendChild(createItem("옵션", r.옵션));
-    card.appendChild(createItem("외장칼라", r.외장칼라));
-    card.appendChild(createItem("내장칼라", r.내장칼라));
-    card.appendChild(createItem("생산번호", r.생산번호));
-    card.appendChild(createItem("출고센터", r.출고센터));
-    card.appendChild(createItem("생산일", 생산일_포맷));
-    card.appendChild(createItem("판매코드", r.판매코드, { red: true }));
-    card.appendChild(createItem("판매가(만원)", r.판매가, { highlight: true }));
-    card.appendChild(createItem("조건 계(만원)", r.계, { highlight: true }));
-    card.appendChild(createItem("D/C율", r["D/C율"], { highlight: true }));
-
-    container.appendChild(card);
-  });
-}
-
-
-  </script>
-
+  <h2>🚗 경남 H-SUPER SAVE 검색기</h2>
+  <div class="banner">
+    <strong>언제, 어디서나 간편하게!</strong> H-SUPER SAVE 대상 재고를 확인할 수 있습니다! (6/6 금 06:00 미배정 재고 기준)<br>
+    <strong>가망고객 점검하시어 좋은 조건의 재고를 선점</strong>하세요!<br><br>
+    - 아래 필터에서 사양을 선택하시고 <strong>"검색"</strong>을 누르면 재고 검색이 가능합니다.<br>
+    - <strong>일부만 선택하셔도 조회가 가능</strong>합니다.<br>
+    - <strong>다른 조건을 검색</strong>하고 싶으면 <strong>초기화</strong> 버튼을 눌러주세요!<br>
+    - 트림, 상세사양, 옵션, 칼라는 '차종 및 엔진' 선택 시 설정 가능합니다.
+  </div>
+
+  <div id="filters"></div>
+
+  <div style="margin-top: 12px;">
+    <button onclick="search()" style="width: 100%; font-size: 16px; padding: 10px;">🔍 검색</button>
+  </div>
+
+  <div class="count" id="resultCount"></div>
+  <div id="results"></div>
+
+  <script>
+    let data = [];
+    const filterOrder = ["차종", "엔진", "트림구분", "트림", "옵션", "외장칼라", "내장칼라", "차량상태", "출고센터"];
+    const dependentFilters = ["트림구분", "트림", "옵션", "외장칼라", "내장칼라"];
+    const fieldLabelMap = {
+      "차종": "차종",
+      "엔진": "엔진",
+      "트림구분": "트림",
+      "트림": "상세사양",
+      "옵션": "옵션",
+      "외장칼라": "외장칼라",
+      "내장칼라": "내장칼라",
+      "차량상태": "차량상태",
+      "출고센터": "출고센터"
+    };
+
+    fetch('inventorydata_converted_0606.json')
+      .then(res => res.json())
+      .then(json => {
+        data = json;
+        renderFilters();
+        onFilterChange();
+      });
+
+    function renderFilters() {
+      const container = document.getElementById("filters");
+      container.innerHTML = "";
+      filterOrder.forEach(field => {
+        const row = document.createElement("div");
+        row.className = "filter-row";
+        row.innerHTML = 
+          <label for="${field}">${fieldLabelMap[field] || field}</label>
+          <select id="${field}" onchange="onFilterChange()"></select>
+          <button onclick="resetOne('${field}')">🔄 초기화</button>
+        ;
+        container.appendChild(row);
+      });
+    }
+
+    function getFilters() {
+      const obj = {};
+      filterOrder.forEach(id => {
+        obj[id] = document.getElementById(id).value;
+      });
+      return obj;
+    }
+
+    function resetOne(fieldId) {
+      const select = document.getElementById(fieldId);
+      if (select) select.value = "";
+      onFilterChange();
+    }
+
+    function controlDependentFilters() {
+      const carType = document.getElementById("차종").value;
+      const engine = document.getElementById("엔진").value;
+      const enable = carType && engine;
+
+      dependentFilters.forEach(id => {
+        const el = document.getElementById(id);
+        el.disabled = !enable;
+        if (!enable) {
+          el.innerHTML = '<option value="">(전체)</option>';
+          el.value = "";
+        }
+      });
+    }
+
+    function onFilterChange() {
+      const filters = getFilters();
+
+      filterOrder.forEach(field => {
+        const select = document.getElementById(field);
+        const currentValue = select.value;
+
+        let relevantData = data.filter(row =>
+          filterOrder.every(f => f === field || !filters[f] || row[f] === filters[f])
+        );
+
+        const values = [...new Set(relevantData.map(d => d[field]).filter(v => v && v !== "null" && v !== "NaN"))].sort();
+
+        select.innerHTML = '<option value="">(전체)</option>';
+        values.forEach(v => {
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = v;
+          if (v === currentValue) opt.selected = true;
+          select.appendChild(opt);
+        });
+      });
+
+      controlDependentFilters();
+    }
+
+    function search() {
+      const filters = getFilters();
+      const results = data.filter(row =>
+        String(row.배정여부 || "").trim() === "미배정" &&
+        filterOrder.every(key => !filters[key] || row[key] === filters[key])
+      );
+
+      document.getElementById("resultCount").textContent = 검색 결과는 총 ${results.length}대입니다.;
+      const container = document.getElementById("results");
+      container.innerHTML = "";
+
+      results.forEach(r => {
+        const 생산일_포맷 = r.생산일 ? new Date(r.생산일).toISOString().split("T")[0] : "";
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = 
+          <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
+          <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
+          <div class="card-item"><strong>상세사양:</strong> ${r.트림}</div>
+          <div class="card-item"><strong>옵션:</strong> ${r.옵션}</div>
+          <div class="card-item"><strong>외장칼라:</strong> ${r.외장칼라}</div>
+          <div class="card-item"><strong>내장칼라:</strong> ${r.내장칼라}</div>
+          <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
+          <div class="card-item"><strong>출고센터:</strong> ${r.출고센터}</div>
+          <div class="card-item"><strong>생산일:</strong> ${생산일_포맷}</div>
+          <div class="card-item" style="color: red;"><strong>판매코드:</strong> ${r.판매코드}</div>
+          <div class="card-item highlight"><strong>판매가(만원):</strong> ${r.판매가}</div>
+          <div class="card-item highlight"><strong>조건 계(만원):</strong> ${r.계}</div>
+          <div class="card-item highlight"><strong>D/C율:</strong> ${r["D/C율"]}</div>
+        ;
+        container.appendChild(card);
+      });
+    }
+  </script>
 </body>
-
 </html>
-
