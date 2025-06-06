@@ -300,71 +300,49 @@
 
 
 
-    function search() {
+function createItem(label, value, options = {}) {
+  const div = document.createElement("div");
+  div.className = "card-item";
+  if (options.highlight) div.classList.add("highlight");
+  if (options.red) div.style.color = "red";
+  div.innerHTML = `<strong>${label}:</strong> ${value ?? "-"}`;
+  return div;
+}
 
-      const filters = getFilters();
+function search() {
+  const filters = getFilters();
+  const results = data.filter(row =>
+    String(row.배정여부 || "").trim() === "미배정" &&
+    filterOrder.every(key => !filters[key] || row[key] === filters[key])
+  );
 
-      const results = data.filter(row =>
+  document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
+  const container = document.getElementById("results");
+  container.innerHTML = "";
 
-        String(row.배정여부 || "").trim() === "미배정" &&
+  results.forEach(r => {
+    const card = document.createElement("div");
+    card.className = "card";
+    const 생산일_포맷 = r.생산일 ? new Date(r.생산일).toISOString().split("T")[0] : "-";
 
-        filterOrder.every(key => !filters[key] || row[key] === filters[key])
+    card.appendChild(createItem("차종", r.차종));
+    card.appendChild(createItem("차량상태", r.차량상태));
+    card.appendChild(createItem("상세사양", r.트림));
+    card.appendChild(createItem("옵션", r.옵션));
+    card.appendChild(createItem("외장칼라", r.외장칼라));
+    card.appendChild(createItem("내장칼라", r.내장칼라));
+    card.appendChild(createItem("생산번호", r.생산번호));
+    card.appendChild(createItem("출고센터", r.출고센터));
+    card.appendChild(createItem("생산일", 생산일_포맷));
+    card.appendChild(createItem("판매코드", r.판매코드, { red: true }));
+    card.appendChild(createItem("판매가(만원)", r.판매가, { highlight: true }));
+    card.appendChild(createItem("조건 계(만원)", r.계, { highlight: true }));
+    card.appendChild(createItem("D/C율", r["D/C율"], { highlight: true }));
 
-      );
+    container.appendChild(card);
+  });
+}
 
-
-
-      document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
-
-      const container = document.getElementById("results");
-
-      container.innerHTML = "";
-
-
-
-      results.forEach(r => {
-
-        const 생산일_포맷 = r.생산일 ? new Date(r.생산일).toISOString().split("T")[0] : "";
-
-        const card = document.createElement("div");
-
-        card.className = "card";
-
-        card.innerHTML = `
-
-          <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
-
-          <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
-
-          <div class="card-item"><strong>상세사양:</strong> ${r.트림}</div>
-
-          <div class="card-item"><strong>옵션:</strong> ${r.옵션}</div>
-
-          <div class="card-item"><strong>외장칼라:</strong> ${r.외장칼라}</div>
-
-          <div class="card-item"><strong>내장칼라:</strong> ${r.내장칼라}</div>
-
-          <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
-
-          <div class="card-item"><strong>출고센터:</strong> ${r.출고센터}</div>
-
-          <div class="card-item"><strong>생산일:</strong> ${생산일_포맷}</div>
-
-          <div class="card-item" style="color: red;"><strong>판매코드:</strong> ${r.판매코드}</div>
-
-          <div class="card-item highlight"><strong>판매가(만원):</strong> ${r.판매가}</div>
-
-          <div class="card-item highlight"><strong>조건 계(만원):</strong> ${r.계}</div>
-
-          <div class="card-item highlight"><strong>D/C율:</strong> ${r["D/C율"]}</div>
-
-        `;
-
-        container.appendChild(card);
-
-      });
-
-    }
 
   </script>
 
