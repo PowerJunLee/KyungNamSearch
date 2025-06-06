@@ -149,39 +149,39 @@
       controlDependentFilters();
     }
 
-    function search() {
-      const filters = getFilters();
-      const results = data.filter(row =>
-        String(row.배정여부 || "").trim() === "미배정" &&
-        filterOrder.every(key => !filters[key] || row[key] === filters[key])
-      );
+function search() {
+  const filters = getFilters();
+  const results = data.filter(row =>
+    String(row.배정여부 || "").trim() === "미배정" &&
+    filterOrder.every(key => !filters[key] || row[key] === filters[key])
+  );
 
-      document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
-      const container = document.getElementById("results");
-      container.innerHTML = "";
+  document.getElementById("resultCount").textContent = `검색 결과는 총 ${results.length}대입니다.`;
+  const container = document.getElementById("results");
+  container.innerHTML = "";
 
-      results.forEach(r => {
-        const 생산일_포맷 = r.생산일 ? new Date(r.생산일).toISOString().split("T")[0] : "";
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <div class="card-item"><strong>차종:</strong> ${r.차종}</div>
-          <div class="card-item"><strong>차량상태:</strong> ${r.차량상태}</div>
-          <div class="card-item"><strong>상세사양:</strong> ${r.트림}</div>
-          <div class="card-item"><strong>옵션:</strong> ${r.옵션}</div>
-          <div class="card-item"><strong>외장칼라:</strong> ${r.외장칼라}</div>
-          <div class="card-item"><strong>내장칼라:</strong> ${r.내장칼라}</div>
-          <div class="card-item"><strong>생산번호:</strong> ${r.생산번호}</div>
-          <div class="card-item"><strong>출고센터:</strong> ${r.출고센터}</div>
-          <div class="card-item"><strong>생산일:</strong> ${생산일_포맷}</div>
-          <div class="card-item" style="color: red;"><strong>판매코드:</strong> ${r.판매코드}</div>
-          <div class="card-item highlight"><strong>판매가(만원):</strong> ${r.판매가}</div>
-          <div class="card-item highlight"><strong>조건 계(만원):</strong> ${r.계}</div>
-          <div class="card-item highlight"><strong>D/C율:</strong> ${r["D/C율"]}</div>
-        `;
-        container.appendChild(card);
-      });
-    }
+  results.forEach(r => {
+    const 생산일_포맷 = r.생산일 ? new Date(r.생산일).toISOString().split("T")[0] : "-";
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div class="card-item"><strong>차종:</strong> ${escapeHTML(r.차종)}</div>
+      <div class="card-item"><strong>차량상태:</strong> ${escapeHTML(r.차량상태)}</div>
+      <div class="card-item"><strong>상세사양:</strong> ${escapeHTML(r.트림)}</div>
+      <div class="card-item"><strong>옵션:</strong> ${escapeHTML(r.옵션)}</div>
+      <div class="card-item"><strong>외장칼라:</strong> ${escapeHTML(r.외장칼라)}</div>
+      <div class="card-item"><strong>내장칼라:</strong> ${escapeHTML(r.내장칼라)}</div>
+      <div class="card-item"><strong>생산번호:</strong> ${escapeHTML(r.생산번호)}</div>
+      <div class="card-item"><strong>출고센터:</strong> ${escapeHTML(r.출고센터)}</div>
+      <div class="card-item"><strong>생산일:</strong> ${생산일_포맷}</div>
+      <div class="card-item" style="color: red;"><strong>판매코드:</strong> ${escapeHTML(r.판매코드)}</div>
+      <div class="card-item highlight"><strong>판매가(만원):</strong> ${escapeHTML(r.판매가)}</div>
+      <div class="card-item highlight"><strong>조건 계(만원):</strong> ${escapeHTML(r.계)}</div>
+      <div class="card-item highlight"><strong>D/C율:</strong> ${escapeHTML(r["D/C율"])}</div>
+    `;
+    container.appendChild(card);
+  });
+}
   </script>
 </body>
 </html>
