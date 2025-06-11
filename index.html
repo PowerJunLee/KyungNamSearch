@@ -62,6 +62,9 @@
       .then(res => res.json())
       .then(json => {
         data = json;
+        data = data.filter(row =>
+  filterOrder.every(f => row[f] !== undefined && row[f] !== null && row[f] !== "" && row[f] !== "null" && row[f] !== "NaN")
+);
         renderFilters();
         onFilterChange();
       });
