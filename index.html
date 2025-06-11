@@ -31,7 +31,7 @@
 <body>
   <h2>🚗 경남 H-SUPER SAVE 검색기</h2>
   <div class="banner">
-    <strong>언제, 어디서나 간편하게!</strong> H-SUPER SAVE 대상 재고를 확인할 수 있습니다! (6/13 목 06:00 미배정 재고 기준)<br>
+    <strong>언제, 어디서나 간편하게!</strong> H-SUPER SAVE 대상 재고를 확인할 수 있습니다! (6/6 금 06:00 미배정 재고 기준)<br>
     <strong>가망고객 점검하시어 좋은 조건의 재고를 선점</strong>하세요!<br><br>
     - 아래 필터에서 사양을 선택하시고 <strong>"검색"</strong>을 누르면 재고 검색이 가능합니다.<br>
     - <strong>일부만 선택하셔도 조회가 가능</strong>합니다.<br>
@@ -58,13 +58,10 @@
       "차량상태": "차량상태", "출고센터": "출고센터"
     };
 
-    fetch('inventorydata_0612.json')
+    fetch('inventorydata_converted_0606.json')
       .then(res => res.json())
       .then(json => {
         data = json;
-        data = data.filter(row =>
-  filterOrder.every(f => row[f] !== undefined && row[f] !== null && row[f] !== "" && row[f] !== "null" && row[f] !== "NaN")
-);
         renderFilters();
         onFilterChange();
       });
@@ -155,13 +152,11 @@
       const container = document.getElementById("results");
       container.innerHTML = "";
 
-results.forEach(r => {
-  let 생산일_포맷 = "";
-  if (r.생산일 && !isNaN(Date.parse(r.생산일))) {
-    생산일_포맷 = new Date(r.생산일).toISOString().split("T")[0];
-  } else {
-    생산일_포맷 = r.생산일 ?? "";
-  }
+      results.forEach(r => {
+        const 생산일_포맷 = r.생산일
+          ? new Date(Number(r.생산일)).toISOString().split("T")[0]
+          : "";
+
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
