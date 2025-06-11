@@ -152,11 +152,13 @@
       const container = document.getElementById("results");
       container.innerHTML = "";
 
-      results.forEach(r => {
-        const 생산일_포맷 = r.생산일
-          ? new Date(Number(r.생산일)).toISOString().split("T")[0]
-          : "";
-
+results.forEach(r => {
+  let 생산일_포맷 = "";
+  if (r.생산일 && !isNaN(Date.parse(r.생산일))) {
+    생산일_포맷 = new Date(r.생산일).toISOString().split("T")[0];
+  } else {
+    생산일_포맷 = r.생산일 ?? "";
+  }
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
